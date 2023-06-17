@@ -30,3 +30,8 @@ app.UseAuthorization();
 app.MapRazorPages();
 
 app.Run();
+
+/*
+    Phát sinh các trang CRUD tự động
+    dotnet aspnet-codegenerator razorpage -m Models.Article -dc Models.MyBlogContext -outDir Pages/Blog -udl --referenceScriptLibraries
+*/
