@@ -18,7 +18,16 @@
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-page="/Account/Logout" asp-area="Identity">Đăng xuất</a>
+            @{
+                var confirmModalValues = new ConfirmModal() {
+                    Title = "Xác nhận đăng xuất",
+                    Content = "Bạn có chắc muốn đăng xuất?",
+                    Area = "Identity",
+                    Page = "/Account/Logout"
+                };
+            }
+            <button type="button" class="btn btn-link nav-link text-dark" data-bs-toggle="modal" data-bs-target="#exampleModal">Đăng xuất</button>
+            <partial name="_ConfirmModalPartial" model="@confirmModalValues"/>
         </li>
     } else {
         <li class="nav-item">
