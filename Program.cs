@@ -45,6 +45,7 @@ builder.Services.Configure<IdentityOptions>(options =>
     // Cấu hình đăng nhập.
     options.SignIn.RequireConfirmedEmail = true;            // Cấu hình xác thực địa chỉ email (email phải tồn tại, xác thực rồi mới cho login)
     options.SignIn.RequireConfirmedPhoneNumber = false;     // Xác thực số điện thoại
+    options.SignIn.RequireConfirmedAccount = true;  // Yêu cầu xác thực email trước khi login, xem trang register để rõ hơn
 
 });
 // Đăng ký Identity
@@ -56,6 +57,13 @@ builder.Services.AddIdentity<AppUser, IdentityRole>()
 // builder.Services.AddDefaultIdentity<AppUser>()
 //                 .AddEntityFrameworkStores<MyBlogContext>()
 //                 .AddDefaultTokenProviders();
+
+/* ================ Authorization option ================ */
+builder.Services.ConfigureApplicationCookie(option => {
+    option.LoginPath = "/login/";
+    option.LogoutPath = "/logout/";
+    option.AccessDeniedPath = "/not-allow.html";
+});
 
 
 var app = builder.Build();
