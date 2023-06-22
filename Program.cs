@@ -1,5 +1,8 @@
+using System.Net;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Models;
@@ -59,12 +62,30 @@ builder.Services.AddIdentity<AppUser, IdentityRole>()
 //                 .AddDefaultTokenProviders();
 
 /* ================ Authorization option ================ */
-builder.Services.ConfigureApplicationCookie(option => {
+builder.Services.ConfigureApplicationCookie(option =>
+{
     option.LoginPath = "/login/";
     option.LogoutPath = "/logout/";
     option.AccessDeniedPath = "/not-allow.html";
 });
 
+/* ================ Thêm các Authentication provider ================ */
+// Từ google, facebook
+builder.Services.AddAuthentication()
+                .AddGoogle(option =>
+                {
+                    var ggConfig = builder.Configuration.GetSection("Authentication:Google");
+                    option.ClientId = ggConfig["ClientId"];
+                    option.ClientSecret = ggConfig["ClientSecret"];
+                    // http://localhost:5253/signin-google => Callbackpath mặc định
+                    option.CallbackPath = "/dang-nhap-tu-google";
+                })
+                .AddFacebook(option =>
+                {
+                    var fbConfig = builder.Configuration.GetSection("Authentication:Facebook");
+                    option.AppId = fbConfig["ClientId"];
+                    option.AppSecret = fbConfig["ClientSecret"];
+                });
 
 var app = builder.Build();
 
@@ -82,6 +103,12 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
+
+/* ================ Thêm vào đoạn này để fix bug khi dùng external login ================ */
+app.UseCookiePolicy(new CookiePolicyOptions()
+{
+    MinimumSameSitePolicy = SameSiteMode.Lax
+});
 
 app.MapRazorPages();
 
@@ -127,4 +154,7 @@ app.Run();
     builder.Services.AddIdentity<AppUser, IdentityRole>()
                     .AddEntityFrameworkStores<MyBlogContext>()
                     .AddDefaultTokenProviders();
+
+    
+
 */

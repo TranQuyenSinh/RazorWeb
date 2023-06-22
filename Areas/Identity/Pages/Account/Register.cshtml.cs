@@ -60,8 +60,7 @@ namespace razorweb.Areas.Identity.Pages.Account
         public string ReturnUrl { get; set; }
 
         /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
+        ///    Chứa thông tin vể các authentication provider
         /// </summary>
         public IList<AuthenticationScheme> ExternalLogins { get; set; }
 
@@ -111,6 +110,11 @@ namespace razorweb.Areas.Identity.Pages.Account
         {
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+
+            // foreach (var provider in ExternalLogins)
+            // {
+            //     _logger.LogInformation(provider.Name);
+            // }
         }
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)

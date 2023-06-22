@@ -113,7 +113,7 @@ namespace razorweb.Areas.Identity.Pages.Account
 
             if (ModelState.IsValid)
             {
-                // thử đăng nhập bằng email
+                // thử đăng nhập bằng username hoặc email
                 // Thiết lập sau 1 số lần login faild sẽ khóa acc: lockoutOnFailure: true
                 var result = await _signInManager.PasswordSignInAsync(Input.UserNameOrEmail, Input.Password, Input.RememberMe, lockoutOnFailure: true);
 
@@ -121,7 +121,7 @@ namespace razorweb.Areas.Identity.Pages.Account
                 if (!result.Succeeded) {
                     var user  = await _userManager.FindByEmailAsync(Input.UserNameOrEmail);
                     if (user != null) {
-                        await _signInManager.PasswordSignInAsync(user.UserName, Input.Password, Input.RememberMe, lockoutOnFailure: true);
+                        result = await _signInManager.PasswordSignInAsync(user.UserName, Input.Password, Input.RememberMe, lockoutOnFailure: true);
                     }
                 }
 

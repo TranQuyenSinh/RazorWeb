@@ -3,6 +3,7 @@
 
 @{
     ViewData["Title"] = "Đăng nhập";
+    var errorMessage = TempData["ErrorMessage"];
 }
 
 <h1>@ViewData["Title"]</h1>
@@ -10,6 +11,9 @@
     <div class="col-md-4">
         <section>
             <form id="account" method="post">
+                @if (TempData.ContainsKey("ErrorMessage")) {
+                   <partial name="/Areas/Identity/Pages/Account/_StatusMessage.cshtml" model="@errorMessage" />
+                }
                 <hr />
                 <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
                 <div class="form-floating mb-3">
@@ -47,7 +51,7 @@
     </div>
     <div class="col-md-6 col-md-offset-2">
         <section>
-            <h3>Sử dụng dịch vụ ngoài để đăng nhập(Google, Facebook,...).</h3>
+            <h3>Sử dụng dịch vụ ngoài</h3>
             <hr />
             @{
                 if ((Model.ExternalLogins?.Count ?? 0) == 0)
@@ -65,7 +69,7 @@
                             <p>
                                 @foreach (var provider in Model.ExternalLogins!)
                                 {
-                                    <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
+                                    <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name" title="Đăng nhập bằng @provider.DisplayName account">Đăng nhập bằng @provider.DisplayName</button>
                                 }
                             </p>
                         </div>
