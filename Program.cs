@@ -85,6 +85,8 @@ builder.Services.AddAuthentication()
                     var fbConfig = builder.Configuration.GetSection("Authentication:Facebook");
                     option.AppId = fbConfig["ClientId"];
                     option.AppSecret = fbConfig["ClientSecret"];
+                    // còn error khi login
+                    // phải xóa &scope=email trong url để fix
                 });
 
 var app = builder.Build();
