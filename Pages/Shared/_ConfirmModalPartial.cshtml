@@ -1,8 +1,8 @@
 @using Models
 @model ConfirmModal
 
-<form class="form-inline" asp-area="@Model.Area" asp-page="@Model.Page" asp-route-returnUrl="@Url.Page("/", new { area = "" })" method="post">
-  <div class="modal"  id="exampleModal" tabindex="-1">
+<form class="form-inline" asp-area="@Model.Area" asp-page="@Model.Page" asp-page-handler="@Model.Handler" asp-route-returnUrl="@Url.Page("/", new { area = "" })" method="post">
+  <div class="modal"  id="@Model.Target" tabindex="-1">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">

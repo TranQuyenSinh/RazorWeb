@@ -1,4 +1,5 @@
 using System.Net;
+using System.Security.Claims;
 using App.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
@@ -92,6 +93,28 @@ builder.Services.AddAuthentication()
 /* ================ Tùy biến thông báo lỗi của Identity ================ */
 builder.Services.AddSingleton<IdentityErrorDescriber, AppIdentityErrorDescriber>();
 
+/* ================ Tạo chính sách xác thực ================ */
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AllowEditUser", policyBuilder =>
+    {
+        // policyBuilder.RequireAuthenticatedUser(); // => Yêu cầu login
+        // policyBuilder.RequireClaim("ClaimName", new string[] {"value1", "value2"});
+        // policyBuilder.RequireRole("RoleName");
+        // policyBuilder.RequireRole("RoleName2");
+
+        policyBuilder.RequireAuthenticatedUser();
+        policyBuilder.RequireRole(new string[] { "Admin", "Editor" }); // admin or editor
+    });
+    options.AddPolicy("AllowManageRole", policyBuilder =>
+    {
+        // policyBuilder.RequireClaim("ClaimType", "value1", "value2");
+        policyBuilder.RequireClaim("permission", "role.view");
+    });
+});
+
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -161,13 +184,27 @@ app.Run();
 
     2. Authorization: Xác thực quyền truy cập
     - Role-based authorization: Xác thực quyền theo vai trò (role)
-    - 1 user có 1 hoặc nhiều role
+        + 1 user có 1 hoặc nhiều role
 
     Các trang quản lý role: Index, Create, Edit, Delete
     => dotnet new page -n Index -o Areas/Admin/Pages/Role -p:n App.Admin.Role
 
     [Authorize](phải đăng nhập) => pagemodel, controller, action của controller
 
+    - Policy-based authorization: Xác thực theo chính sách
     
+    - Claims-based authorization: Xác thực theo những đặc tính của user
+    
+    Ví dụ về claim:
+    Bằng lái xe (Role) => Được lái xe
+    - Ngày sinh -> claim
+    - Nơi sinh  -> claim
+
+    Mua rượu (ĐK: > 18 tuổi)
+    - Kiểm tra ngày sinh(claim) trên Bằng lái xe (Role) => RoleClaim => Claims-based authorization
+
+    IdentityRoleClaim<string> claims1;
+    IdentityUserClaim<string> claims2;
+    Claim claim3;
 
 */

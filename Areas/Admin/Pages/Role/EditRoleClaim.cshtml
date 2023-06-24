@@ -1,0 +1,49 @@
+﻿@page "/admin/edit-roleClaim/{claimId}"
+@model App.Admin.Role.EditRoleClaimModel
+@{
+    ViewData["Title"] = $"Chỉnh sửa đặt tính: {Model.Claim.ClaimType}";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<partial name="_StatusMessage" model="@Model.StatusMessage"/>
+
+<hr>
+<div class="row">
+    <div class="col-md-6">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group mb-2">
+                <label asp-for="Input.ClaimType" class="control-label"></label>
+                <input asp-for="Input.ClaimType" class="form-control" />
+                <span asp-validation-for="Input.ClaimType" class="text-danger"></span>
+            </div>
+             <div class="form-group mb-2">
+                <label asp-for="Input.ClaimValue" class="control-label"></label>
+                <input asp-for="Input.ClaimValue" class="form-control" />
+                <span asp-validation-for="Input.ClaimValue" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Cập nhật" class="btn btn-primary" />
+                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteRoleClaim">Xóa</button>
+                <a asp-page="./Edit" asp-route-roleId="@Model.Claim.RoleId" class="btn btn-primary" >Edit role</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@{
+    var confirmModal = new ConfirmModal() {
+        Target = "deleteRoleClaim",
+        Title = "Xác nhận xóa",
+        Content = "Bạn có chắc muốn xóa đặc tính này?",
+        Area = "Admin",
+        Page = "/Role/EditRoleClaim",
+        Handler = "Delete"
+    };
+}
+<partial name="_ConfirmModalPartial" model="@confirmModal"/>
+
+@section Scripts{
+    <partial name="_ValidationScriptsPartial" />
+}

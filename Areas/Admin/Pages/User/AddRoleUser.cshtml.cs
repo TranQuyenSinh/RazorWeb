@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using Models;
 
 namespace App.Admin.User
@@ -17,11 +18,12 @@ namespace App.Admin.User
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
-
-        public AddRoleUser(UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager)
+        private readonly MyBlogContext _dbContext;
+        public AddRoleUser(UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager, MyBlogContext dbContext)
         {
             _userManager = userManager;
             _roleManager = roleManager;
+            _dbContext = dbContext;
         }
 
         [TempData]
@@ -31,9 +33,17 @@ namespace App.Admin.User
 
         [BindProperty]
         [Display(Name = "Vai trò")]
+        // Danh sách Role của user
         public string[] RoleNames { get; set; }
 
+        // Danh sách role trong db
         public SelectList allRoles { get; set; }
+
+        // các claim từ tất cả role của user
+        public List<IdentityRoleClaim<string>> ClaimsInRole { get; set; }
+
+        // các claim của user
+        public List<IdentityUserClaim<string>> ClaimsOfUser { get; set; }
 
         public async Task<IActionResult> OnGetAsync(string userId)
         {
@@ -48,6 +58,7 @@ namespace App.Admin.User
             }
 
             RoleNames = (await _userManager.GetRolesAsync(user)).ToArray<string>();
+            await GetClaims(userId);
 
             /* ================ Nạp các role trong db ================ */
             List<string> roleNames = _roleManager.Roles.Select(role => role.Name).ToList();
@@ -103,6 +114,23 @@ namespace App.Admin.User
             StatusMessage = $"Cập nhật vai trò cho {user.UserName} thành công.";
 
             return LocalRedirect(returnUrl);
+        }
+
+        async Task GetClaims(string userId)
+        {
+            var rolesOfUser = (from ur in _dbContext.UserRoles
+                               join r in _dbContext.Roles on ur.RoleId equals r.Id
+                               where ur.UserId == userId
+                               select r);
+            var claimsInRole = from r in rolesOfUser
+                               join c in _dbContext.RoleClaims on r.Id equals c.RoleId
+                               select c;
+            ClaimsInRole = await claimsInRole.ToListAsync();
+
+            var claimsOfUser = from uc in _dbContext.UserClaims
+                               where uc.UserId == userId
+                               select uc;
+            ClaimsOfUser = await claimsOfUser.ToListAsync();
         }
     }
 }

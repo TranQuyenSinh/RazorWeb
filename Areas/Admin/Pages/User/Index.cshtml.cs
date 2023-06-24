@@ -9,7 +9,7 @@ using Models;
 
 namespace App.Admin.User
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize(Policy = "AllowEditUser")]
     public class IndexModel : PageModel
     {
         private readonly UserManager<AppUser> _userManager;

@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 using Models;
 
 namespace App.Admin.Role
@@ -23,18 +24,21 @@ namespace App.Admin.Role
         [BindProperty]
         public InputModel Input { get; set; }
 
-        public IdentityRole role { get; set; }
+        public IdentityRole Role { get; set; }
+
+        public List<IdentityRoleClaim<string>> Claims { get; set; }
 
         public async Task<IActionResult> OnGet(string roleId)
         {
             if (roleId == null) return NotFound("Không tìm thấy role");
 
-            role = await _roleManager.FindByIdAsync(roleId);
-            if (role != null)
+            Role = await _roleManager.FindByIdAsync(roleId);
+            Claims = await _dbContext.RoleClaims.Where(rc => rc.RoleId == roleId).ToListAsync();
+            if (Role != null)
             {
                 Input = new InputModel()
                 {
-                    Name = role.Name
+                    Name = Role.Name
                 };
                 return Page();
             }
@@ -46,17 +50,19 @@ namespace App.Admin.Role
         {
             if (roleId == null) return NotFound("Không tìm thấy role");
 
-            role = await _roleManager.FindByIdAsync(roleId);
-            if (role == null) return NotFound("Không tìm thấy role");
+            Role = await _roleManager.FindByIdAsync(roleId);
+            Claims = await _dbContext.RoleClaims.Where(rc => rc.RoleId == roleId).ToListAsync();
+
+            if (Role == null) return NotFound("Không tìm thấy role");
 
             if (!ModelState.IsValid)
             {
                 return Page();
             }
 
-            role.Name = Input.Name;
+            Role.Name = Input.Name;
 
-            var result = await _roleManager.UpdateAsync(role);
+            var result = await _roleManager.UpdateAsync(Role);
             if (result.Succeeded)
             {
                 StatusMessage = $"Cập nhật thành công";
