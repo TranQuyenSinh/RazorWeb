@@ -1,4 +1,5 @@
 using System.Net;
+using App.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
@@ -8,7 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Models;
 
 var builder = WebApplication.CreateBuilder(args);
-// Add send mail service
+/* ================ Send Mail Service ================ */
 // Lấy và đăng ký cấu hình send mail
 builder.Services.AddOptions();
 var mailsettings = builder.Configuration.GetSection("MailSettings");
@@ -88,6 +89,8 @@ builder.Services.AddAuthentication()
                     // còn error khi login
                     // phải xóa &scope=email trong url để fix
                 });
+/* ================ Tùy biến thông báo lỗi của Identity ================ */
+builder.Services.AddSingleton<IdentityErrorDescriber, AppIdentityErrorDescriber>();
 
 var app = builder.Build();
 
@@ -95,7 +98,6 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
@@ -156,6 +158,15 @@ app.Run();
     builder.Services.AddIdentity<AppUser, IdentityRole>()
                     .AddEntityFrameworkStores<MyBlogContext>()
                     .AddDefaultTokenProviders();
+
+    2. Authorization: Xác thực quyền truy cập
+    - Role-based authorization: Xác thực quyền theo vai trò (role)
+    - 1 user có 1 hoặc nhiều role
+
+    Các trang quản lý role: Index, Create, Edit, Delete
+    => dotnet new page -n Index -o Areas/Admin/Pages/Role -p:n App.Admin.Role
+
+    [Authorize](phải đăng nhập) => pagemodel, controller, action của controller
 
     
 
