@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -9,11 +10,12 @@ using Models;
 
 namespace razorweb.Pages_Blog
 {
+    [Authorize(Policy = "InGenZ")]
     public class DetailsModel : PageModel
     {
-        private readonly Models.MyBlogContext _context;
+        private readonly Models.AppDbContext _context;
 
-        public DetailsModel(Models.MyBlogContext context)
+        public DetailsModel(Models.AppDbContext context)
         {
             _context = context;
         }

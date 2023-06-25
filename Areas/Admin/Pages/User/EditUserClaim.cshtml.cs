@@ -9,10 +9,10 @@ namespace App.Admin.User
 {
     public class EditUserClaimModel : PageModel
     {
-        private readonly MyBlogContext _dbContext;
+        private readonly AppDbContext _dbContext;
         private readonly UserManager<AppUser> _userManager;
 
-        public EditUserClaimModel(MyBlogContext dbContext, UserManager<AppUser> userManager)
+        public EditUserClaimModel(AppDbContext dbContext, UserManager<AppUser> userManager)
         {
             _dbContext = dbContext;
             _userManager = userManager;

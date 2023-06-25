@@ -1,7 +1,9 @@
 using System.Net;
 using System.Security.Claims;
+using App.Security.Requirement;
 using App.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -21,7 +23,7 @@ builder.Services.AddSingleton<IEmailSender, SendMailService>();
 
 // Add services to the container.
 builder.Services.AddRazorPages();
-builder.Services.AddDbContext<MyBlogContext>(options =>
+builder.Services.AddDbContext<AppDbContext>(options =>
 {
     string connStr = builder.Configuration.GetConnectionString("MyBlogContext");
     options.UseSqlServer(connStr);
@@ -55,7 +57,7 @@ builder.Services.Configure<IdentityOptions>(options =>
 });
 // Đăng ký Identity
 builder.Services.AddIdentity<AppUser, IdentityRole>()
-                .AddEntityFrameworkStores<MyBlogContext>()
+                .AddEntityFrameworkStores<AppDbContext>()
                 .AddDefaultTokenProviders();
 
 /* Sử dụng giao diện mặc định của Identity.UI*/
@@ -111,7 +113,31 @@ builder.Services.AddAuthorization(options =>
         // policyBuilder.RequireClaim("ClaimType", "value1", "value2");
         policyBuilder.RequireClaim("permission", "role.view");
     });
+    options.AddPolicy("InGenZ", policyBuilder =>
+    {
+        policyBuilder.RequireAuthenticatedUser();
+        policyBuilder.Requirements.Add(new InGenZRequirement());
+
+        // phải xây dựng thêm dịch vụ Authorization handler để xử lý requiment
+        // Mỗi khi có kiểm tra requirement đều chuyển thông tin đến dịch vụ này dể kiểm tra
+    });
+
+     options.AddPolicy("ShowAdminMenu", policyBuilder =>
+    {
+        policyBuilder.RequireAuthenticatedUser();
+        policyBuilder.RequireRole("Admin");
+    });
+
+    options.AddPolicy("CanUpdateArticle", policyBuilder =>
+    {
+        policyBuilder.RequireAuthenticatedUser();
+        policyBuilder.Requirements.Add(new ArticleUpdateRequirement());
+    });
+
 });
+
+/* ================ Đăng ký Authorization handler ================ */
+builder.Services.AddTransient<IAuthorizationHandler, AppAuthorizationHandler>();
 
 
 

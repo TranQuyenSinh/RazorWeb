@@ -18,8 +18,8 @@ namespace App.Admin.User
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly MyBlogContext _dbContext;
-        public AddRoleUser(UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager, MyBlogContext dbContext)
+        private readonly AppDbContext _dbContext;
+        public AddRoleUser(UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager, AppDbContext dbContext)
         {
             _userManager = userManager;
             _roleManager = roleManager;

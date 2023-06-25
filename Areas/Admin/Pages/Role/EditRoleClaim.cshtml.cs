@@ -10,7 +10,7 @@ namespace App.Admin.Role
 {
     public class EditRoleClaimModel : RolePageModel
     {
-        public EditRoleClaimModel(RoleManager<IdentityRole> roleManager, MyBlogContext context) : base(roleManager, context)
+        public EditRoleClaimModel(RoleManager<IdentityRole> roleManager, AppDbContext context) : base(roleManager, context)
         {
         }
 

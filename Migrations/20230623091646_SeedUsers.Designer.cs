@@ -11,7 +11,7 @@ using Models;
 
 namespace razorweb.Migrations
 {
-    [DbContext(typeof(MyBlogContext))]
+    [DbContext(typeof(AppDbContext))]
     [Migration("20230623091646_SeedUsers")]
     partial class SeedUsers
     {

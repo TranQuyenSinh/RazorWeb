@@ -2,9 +2,9 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Models {
-    public class MyBlogContext:IdentityDbContext<AppUser>
+    public class AppDbContext:IdentityDbContext<AppUser>
     {
-        public MyBlogContext(DbContextOptions<MyBlogContext> options):base(options) {
+        public AppDbContext(DbContextOptions<AppDbContext> options):base(options) {
             // ...
             
         }
